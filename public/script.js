@@ -50,5 +50,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Initial bot message
-    addMessage('bot', 'Hello! I am your Gemini chatbot. How can I help you today?');
+    addMessage('bot', "Hi! I'm Tharindu Nuwantha's AI assistant 🤖. Ask me anything about his skills, projects, education, or contact info. How can I help you today?");
 });
