@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gemini Chatbot</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="bg-anim"></div>
+
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="title-left">
+                <div class="leds">
+                    <span class="led red"></span>
+                    <span class="led yellow"></span>
+                    <span class="led green"></span>
+                </div>
+                <h1 class="app-title">Tharindu · <small class="subtitle">terminal v1.0</small></h1>
+            </div>
+            <div class="status">● connected</div>
+        </header>
+
+        <main class="chat-box" id="chat-box" aria-live="polite" role="log">
+            <!-- Chat messages will appear here -->
+            <!-- Example message markup (JS should insert these) -->
+            <!-- <div class="message bot-message">Welcome — how can I help?</div> -->
+        </main>
+
+        <form class="chat-input" onsubmit="return false;">
+            <input type="text" id="user-input" placeholder="> Type your message..." autocomplete="off" />
+            <button id="send-button" class="btn-neon" aria-label="Send">Send</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+/* Hacker / Terminal neon theme
+   - Uses CSS variables for easy colour tuning
+   - Animations: background, message entrance, typing dot, button pulse
+*/
+:root{
+  --bg-1: #0b0f12;
+  --bg-2: #061016;
+  --neon: #00ff9f;   /* neon green */
+  --neon-2: #40e0ff; /* cyan */
+  --accent: #7c4dff; /* purple accent */
+  --muted: #8d98a3;
+  --glass: rgba(255,255,255,0.04);
+  --glass-2: rgba(255,255,255,0.02);
+  --danger: #ff6b6b;
+  --radius: 12px;
+  --fw-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+}
+
+/* PAGE & BACKDROP */
+*{box-sizing:border-box}
+html,body{
+  height:100%;
+  margin:0;
+  font-family: var(--fw-mono);
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(64,224,255,0.02), transparent),
+              linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  color: #cfeee7;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow:hidden;
+}
+
+/* animated subtle grid/matrix lines background */
+.bg-anim{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  background-image:
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px;
+  opacity:0.12;
+  animation: drift 30s linear infinite;
+  pointer-events:none;
+}
+@keyframes drift{
+  from { transform: translate3d(0,0,0) rotate(0.01deg); }
+  to   { transform: translate3d(-200px,80px,0) rotate(0.01deg); }
+}
+
+/* main container */
+.chat-container{
+  position:relative;
+  width:720px;
+  max-width:94%;
+  height:78vh;
+  max-height:920px;
+  margin:calc(50vh - 40vh) auto;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow:
+    0 10px 30px rgba(2,6,10,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.02);
+  border: 1px solid rgba(124,77,255,0.08);
+  overflow: hidden;
+  display:flex;
+  flex-direction:column;
+  z-index:2;
+  backdrop-filter: blur(6px) saturate(120%);
+  outline: 1px solid rgba(0,0,0,0.2);
+}
+
+/* header - terminal style */
+.chat-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 18px;
+  gap:12px;
+  border-bottom:1px solid var(--glass-2);
+  background: linear-gradient(180deg, rgba(0,0,0,0.08), transparent);
+}
+.title-left{display:flex;align-items:center;gap:12px}
+.leds{display:flex;gap:6px; padding-left:2px}
+.led{width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 6px rgba(0,0,0,0.4)}
+.led.red{background: #ff6b6b; box-shadow:0 0 10px rgba(255,107,107,0.2)}
+.led.yellow{background: #ffd166; box-shadow:0 0 8px rgba(255,209,102,0.12)}
+.led.green{background: var(--neon); box-shadow:0 0 14px rgba(0,255,159,0.12)}
+
+.app-title{
+  font-size:18px;
+  text-transform:lowercase;
+  margin:0;
+  color: white;
+  letter-spacing: 0.6px;
+}
+.app-title .subtitle{
+  font-size:10px;
+  color:var(--muted);
+  margin-left:6px;
+  vertical-align:middle;
+}
+
+/* status indicator with neon dot */
+.status{
+  color: var(--muted);
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  opacity:0.95;
+}
+.status::before{
+  content: ' ';
+  width:10px;height:10px;border-radius:50%;
+  display:inline-block;
+  background: linear-gradient(90deg, var(--neon), var(--neon-2));
+  box-shadow:0 0 12px rgba(0,255,159,0.12);
+  transform: translateY(-1px);
+}
+
+/* chat area */
+.chat-box{
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  align-items:flex-start;
+  overflow:auto;
+  flex:1 1 auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124,77,255,0.3) transparent;
+  position:relative;
+  isolation:isolate;
+}
+
+/* custom scrollbar for WebKit */
+.chat-box::-webkit-scrollbar{width:10px}
+.chat-box::-webkit-scrollbar-thumb{
+  background: linear-gradient(180deg, rgba(124,77,255,0.18), rgba(64,224,255,0.18));
+  border-radius:999px;
+  border:2px solid transparent;
+  background-clip:padding-box;
+}
+.chat-box::-webkit-scrollbar-track{background:transparent}
+
+/* message base style */
+.message{
+  max-width:76%;
+  padding:12px 14px;
+  border-radius:12px;
+  font-size:14px;
+  line-height:1.45;
+  position:relative;
+  box-shadow: 0 6px 18px rgba(2,6,10,0.45);
+  transform-origin:left center;
+  animation: msgEntrance 420ms cubic-bezier(.2,.9,.25,1);
+  word-wrap:break-word;
+}
+
+/* message entrance */
+@keyframes msgEntrance{
+  from { transform: translateY(10px) scale(.995); opacity:0; filter:blur(6px) }
+  to   { transform: translateY(0) scale(1); opacity:1; filter:blur(0) }
+}
+
+/* bot message - neon glass */
+.bot-message{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-left: 2px solid rgba(64,224,255,0.16);
+  color: #dff;
+  align-self:flex-start;
+  box-shadow: 0 8px 22px rgba(40,120,150,0.06);
+  backdrop-filter: blur(4px);
+}
+
+/* user message - neon purple */
+.user-message{
+  background: linear-gradient(90deg, rgba(124,77,255,0.12), rgba(64,224,255,0.04));
+  border-right: 2px solid rgba(124,77,255,0.28);
+  color: white;
+  align-self:flex-end;
+  text-align:right;
+}
+
+/* small timestamp or meta */
+.msg-meta{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+/* typing indicator pill (can be appended by JS) */
+.typing{
+  width:64px;
+  height:26px;
+  border-radius:999px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+  padding:6px;
+  background: rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.02);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.typing .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--muted);
+  opacity:0.9;
+  animation: blink 1.2s infinite ease-in-out;
+}
+.typing .dot:nth-child(2){ animation-delay: 0.15s }
+.typing .dot:nth-child(3){ animation-delay: 0.3s }
+@keyframes blink{
+  0%{ transform:translateY(0); opacity:0.2 }
+  50%{ transform:translateY(-4px); opacity:1 }
+  100%{ transform:translateY(0); opacity:0.2 }
+}
+
+/* input area */
+.chat-input{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px;
+  border-top:1px solid var(--glass-2);
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.04));
+}
+
+/* input field looks like terminal prompt */
+.chat-input input{
+  flex:1;
+  min-width:0;
+  padding:12px 14px;
+  font-family: var(--fw-mono);
+  font-size:14px;
+  color: #e6fff9;
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.03);
+  border-radius:999px;
+  outline:none;
+  box-shadow: 0 6px 18px rgba(2,6,10,0.45) inset;
+  caret-color: var(--neon);
+}
+
+/* placeholder styling */
+.chat-input input::placeholder{
+  color: rgba(200,255,235,0.24);
+  font-style:italic;
+}
+
+/* neon send button */
+.btn-neon{
+  padding:10px 16px;
+  background: linear-gradient(90deg, rgba(0,255,159,0.08), rgba(124,77,255,0.08));
+  border-radius:999px;
+  border: 1px solid rgba(124,77,255,0.22);
+  color: #eafff5;
+  font-weight:700;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:0.6px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow: 0 6px 22px rgba(124,77,255,0.06), 0 0 22px rgba(64,224,255,0.02);
+  position:relative;
+  overflow:hidden;
+}
+
+/* button hover/glow */
+.btn-neon:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(64,224,255,0.08), 0 0 36px rgba(124,77,255,0.06);
+}
+
+/* animated ripple on click (visual only; JS can toggle .active) */
+.btn-neon::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+  background: linear-gradient(90deg, rgba(0,255,159,0.06), rgba(124,77,255,0.04));
+  opacity:0;
+  transition: opacity .28s ease;
+}
+.btn-neon:active::after{ opacity:1; transition: none; }
+
+/* focus states for keyboard navigation */
+.chat-input input:focus{
+  box-shadow: 0 6px 22px rgba(0,255,159,0.06), 0 0 18px rgba(0,255,159,0.04);
+  border-color: rgba(0,255,159,0.18);
+}
+
+/* small responsive tweaks */
+@media (max-width:540px){
+  .chat-container{ height:86vh; width:96% }
+  .app-title{ font-size:15px }
+  .chat-input input{ font-size:13px }
+}
+
+/* Optional: subtle floating "scanlines" overlay across messages */
+.chat-box::before{
+  content:'';
+  pointer-events:none;
+  position:absolute; inset:0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.00) 0px,
+    rgba(255,255,255,0.01) 1px,
+    rgba(255,255,255,0.00) 3px
+  );
+  mix-blend-mode:overlay;
+  opacity:0.05;
+}
+
+/* Small decorative neon accent that slides across on load */
+.chat-container::after{
+  content:'';
+  position:absolute;
+  left:-40%;
+  top:-10%;
+  width:180%;
+  height:120%;
+  background: radial-gradient(600px 400px at 20% 40%, rgba(64,224,255,0.03), transparent 10%),
+              radial-gradient(700px 500px at 80% 60%, rgba(124,77,255,0.03), transparent 10%);
+  transform: rotate(8deg);
+  pointer-events:none;
+  animation: accentShift 12s ease-in-out infinite;
+  opacity:0.8;
+}
+@keyframes accentShift{
+  0% { transform: translateX(-20px) rotate(8deg) }
+  50% { transform: translateX(20px) rotate(6deg) }
+  100% { transform: translateX(-20px) rotate(8deg) }
+}
