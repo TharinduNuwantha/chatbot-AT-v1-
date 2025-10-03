@@ -1,4 +1,4 @@
-# 🤖 Tharindu's AI Portfolio Assistant
+# 🤖 Tharindu's AI Portfolio Assistant(version 1.0)
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express.js-Framework-black?logo=express)](https://expressjs.com/)
